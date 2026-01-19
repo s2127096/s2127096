@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K-Travel Guide: 맞춤형 한국 여행 추천 시스템</title>
+    <title>K-Travel Guide: カスタマイズされた韓国旅行推奨システム</title>
     <style>
         :root { --primary: #0047a0; --accent: #cd2e3a; --bg: #f8f9fa; }
         body { font-family: 'Malgun Gothic', sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; }
@@ -26,36 +26,36 @@
 <body>
 
 <header>
-    <h1>🇰🇷 K-Travel 맞춤형 여행 가이드</h1>
-    <p>알고리즘을 통해 당신의 조건에 가장 적합한 여행지를 추천합니다.</p>
+    <h1>🇰🇷 K-Travel カスタマイズされた旅行ガイド</h1>
+    <p>アルゴリズムであなたの条件に最適な旅行先をお勧めします。</p>
 </header>
 
 <div class="container">
     <div class="config-card">
-        <h2>여행 스타일 설정</h2>
+        <h2>旅行スタイル設定</h2>
         
-        <label>♿ 교통약자 편의성 (배리어 프리)</label>
+        <label>♿ バリアフリー (アクセシビリティ)</label>
         <select id="accInput">
-            <option value="5">매우 중요 (평지 및 엘리베이터 위주)</option>
-            <option value="3">보통 (도보 이동 가능)</option>
-            <option value="1">중요하지 않음 (경사/계단 상관없음)</option>
+            <option value="5">非常に重要 (平坦な道やエレベーターが必要)</option>
+            <option value="3">普通 (徒歩移動が可能)</option>
+            <option value="1">重要ではない (坂道や階段を気にしない)</option>
         </select>
         
-        <label>⏱️ 여행 소요 시간</label>
+        <label>⏱️ 旅行所要時間</label>
         <select id="timeInput">
-            <option value="1">짧게 (1~2시간 가벼운 코스)</option>
-            <option value="3">보통 (반나절 소요)</option>
-            <option value="5">길게 (하루 종일 충분히)</option>
+            <option value="1">短時間 (1～2時間の軽いコース)</option>
+            <option value="3">普通 (半日程度)</option>
+            <option value="5">長時間 (一日中楽しむ)</option>
         </select>
 
-        <label>💸 여행 예산 (비용)</label>
+        <label>💸 旅行予算 (費用)</label>
         <select id="costInput">
-            <option value="1">가성비 여행 (무료/저가)</option>
-            <option value="3">보통 지출</option>
-            <option value="5">프리미엄 (고급/유료 시설)</option>
+            <option value="1">コスパ重視 (無料/低価格)</option>
+            <option value="3">普通の支出</option>
+            <option value="5">プレミアム (高級/有料施設)</option>
         </select>
 
-        <button onclick="runRecommend()">맞춤형 여행지 추천 시작</button>
+        <button onclick="runRecommend()">カスタマイズされた旅行先をお勧め</button>
     </div>
 
     <div id="resultArea"></div>
@@ -102,7 +102,7 @@ function runRecommend() {
 
     // 3. 화면에 결과 출력
     const resultArea = document.getElementById('resultArea');
-    resultArea.innerHTML = "<h2>당신을 위한 최적의 여행지 순위</h2>";
+    resultArea.innerHTML = "<h2>あなたに最適な旅行先のランキング</h2>";
     
     recommended.forEach((loc, index) => {
         // 상위 5개만 강조하거나 전체를 리스트업
@@ -112,7 +112,7 @@ function runRecommend() {
                 <div class="info">
                     <strong>${loc.name}</strong>
                 </div>
-                <div class="match-badge">적합도 점수: ${loc.score}</div>
+                <div class="match-badge">適合度スコア: ${loc.score}</div>
             </div>
         `;
     });
