@@ -3,107 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K-Travel: 맞춤형 한국 여행 추천</title>
+    <title>K-Travel Guide: 맞춤형 한국 여행 추천 시스템</title>
     <style>
         :root { --primary: #0047a0; --accent: #cd2e3a; --bg: #f8f9fa; }
         body { font-family: 'Malgun Gothic', sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; }
-        header { background: var(--primary); color: white; padding: 2rem 1rem; text-align: center; border-bottom: 5px solid var(--accent); }
+        header { background: var(--primary); color: white; padding: 2.5rem 1rem; text-align: center; border-bottom: 5px solid var(--accent); }
         .container { max-width: 800px; margin: 20px auto; padding: 0 15px; }
-        .config-card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        h2 { border-left: 5px solid var(--primary); padding-left: 10px; margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; }
-        select { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px; }
-        button { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 1.1rem; cursor: pointer; transition: 0.3s; }
-        button:hover { background: #003375; }
-        .result-item { background: white; padding: 15px; margin-bottom: 10px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; }
-        .rank { background: var(--accent); color: white; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; }
-        .info { flex-grow: 1; margin-left: 15px; }
-        .match-badge { background: #e7f3ff; color: #2196F3; padding: 4px 8px; border-radius: 5px; font-size: 0.85rem; }
+        .config-card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 25px; }
+        h2 { border-left: 5px solid var(--primary); padding-left: 10px; margin-bottom: 20px; font-size: 1.4rem; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 0.95rem; color: #555; }
+        select { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px; background: #fff; font-size: 1rem; }
+        button { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 1.2rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #003375; transform: translateY(-2px); }
+        .result-item { background: white; padding: 18px; margin-bottom: 12px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; transition: 0.2s; }
+        .result-item:hover { border-color: var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .rank { background: var(--accent); color: white; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; flex-shrink: 0; }
+        .info { flex-grow: 1; margin-left: 20px; }
+        .info strong { font-size: 1.1rem; display: block; margin-bottom: 4px; }
+        .match-badge { background: #e7f3ff; color: #2196F3; padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; white-space: nowrap; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>🇰🇷 K-Travel 가이드</h1>
-    <p>당신의 조건에 딱 맞는 한국 여행지를 알고리즘으로 찾아드립니다.</p>
+    <h1>🇰🇷 K-Travel 맞춤형 여행 가이드</h1>
+    <p>알고리즘을 통해 당신의 조건에 가장 적합한 여행지를 추천합니다.</p>
 </header>
 
 <div class="container">
     <div class="config-card">
-        <h2>내 여행 스타일 설정</h2>
+        <h2>여행 스타일 설정</h2>
         
         <label>♿ 교통약자 편의성 (배리어 프리)</label>
         <select id="accInput">
-            <option value="5">매우 중요 (휠체어/유모차 이용)</option>
-            <option value="3">보통</option>
-            <option value="1">중요하지 않음</option>
+            <option value="5">매우 중요 (평지 및 엘리베이터 위주)</option>
+            <option value="3">보통 (도보 이동 가능)</option>
+            <option value="1">중요하지 않음 (경사/계단 상관없음)</option>
         </select>
         
-        <label>💸 여행 비용 (예산)</label>
-        <select id="costInput">
-            <option value="1">알뜰 여행 (무료/공원)</option>
-            <option value="3">적당한 지출</option>
-            <option value="5">럭셔리 (호텔/프라이빗)</option>
+        <label>⏱️ 여행 소요 시간</label>
+        <select id="timeInput">
+            <option value="1">짧게 (1~2시간 가벼운 코스)</option>
+            <option value="3">보통 (반나절 소요)</option>
+            <option value="5">길게 (하루 종일 충분히)</option>
         </select>
 
-        <button onclick="runRecommend()">추천 여행지 보기</button>
+        <label>💸 여행 예산 (비용)</label>
+        <select id="costInput">
+            <option value="1">가성비 여행 (무료/저가)</option>
+            <option value="3">보통 지출</option>
+            <option value="5">프리미엄 (고급/유료 시설)</option>
+        </select>
+
+        <button onclick="runRecommend()">맞춤형 여행지 추천 시작</button>
     </div>
 
     <div id="resultArea"></div>
 </div>
 
 <script>
-// 여행지 데이터베이스 (수정 가능)
+// 서울 및 부산 여행지 15곳 데이터셋
 const locations = [
-  // 1. 서울 (Seoul)
+  // 서울 (Seoul)
   { name: "경복궁 (Gyeongbokgung)", accessibility: 4, time: 3, cost: 2 },
   { name: "N서울타워 (N Seoul Tower)", accessibility: 2, time: 3, cost: 4 },
   { name: "명동 (Myeongdong)", accessibility: 5, time: 4, cost: 4 },
   { name: "이태원 (Itaewon)", accessibility: 2, time: 3, cost: 4 },
   { name: "동대문 디자인 플라자 (DDP)", accessibility: 5, time: 3, cost: 2 },
-  { name: "북촌 한옥마을 (Bukchon Hanok Village)", accessibility: 1, time: 3, cost: 1 },
+  { name: "북촌 한옥마을 (Bukchon)", accessibility: 1, time: 3, cost: 1 },
   { name: "인사동 (Insadong)", accessibility: 4, time: 2, cost: 2 },
   { name: "청계천 (Cheonggyecheon)", accessibility: 3, time: 2, cost: 1 },
   { name: "한강 공원 (Hangang Park)", accessibility: 4, time: 4, cost: 1 },
   { name: "홍대 (Hongdae)", accessibility: 4, time: 4, cost: 3 },
 
-  // 2. 부산 (Busan)
-  { name: "해운대 해수욕장 (Haeundae Beach)", accessibility: 5, time: 3, cost: 2 },
-  { name: "광안리 해수욕장 (Gyeongalli Beach)", accessibility: 4, time: 2, cost: 2 },
+  // 부산 (Busan)
+  { name: "해운대 해수욕장 (Haeundae)", accessibility: 5, time: 3, cost: 2 },
+  { name: "광안리 해수욕장 (Gwangalli)", accessibility: 4, time: 2, cost: 2 },
   { name: "자갈치 시장 (Jagalchi Market)", accessibility: 3, time: 2, cost: 3 },
   { name: "태종대 (Taejongdae)", accessibility: 2, time: 5, cost: 2 },
   { name: "부산타워 (Busan Tower)", accessibility: 3, time: 2, cost: 3 }
 ];
 
 function runRecommend() {
+    // 1. 사용자 입력값 가져오기
     const userCondition = {
         accessibility: parseInt(document.getElementById('accInput').value),
-        cost: parseInt(document.getElementById('costInput').value),
-        time: 1 // 기본값
+        time: parseInt(document.getElementById('timeInput').value),
+        cost: parseInt(document.getElementById('costInput').value)
     };
 
-    // 사용자님의 알고리즘 적용
+    // 2. 추천 알고리즘: 각 항목별 차이의 절대값을 합산(Lower is Better)
     const recommended = locations.map(location => {
         let score = Math.abs(userCondition.accessibility - location.accessibility) +
-                    Math.abs(userCondition.cost - location.cost) +
-                    Math.abs(userCondition.time - location.time);
+                    Math.abs(userCondition.time - location.time) +
+                    Math.abs(userCondition.cost - location.cost);
         return { ...location, score };
-    }).sort((a, b) => a.score - b.score);
+    }).sort((a, b) => a.score - b.score); // 점수 낮은 순 정렬
 
+    // 3. 화면에 결과 출력
     const resultArea = document.getElementById('resultArea');
-    resultArea.innerHTML = "<h2>나를 위한 추천 리스트</h2>";
+    resultArea.innerHTML = "<h2>당신을 위한 최적의 여행지 순위</h2>";
     
     recommended.forEach((loc, index) => {
+        // 상위 5개만 강조하거나 전체를 리스트업
         resultArea.innerHTML += `
             <div class="result-item">
                 <div class="rank">${index + 1}</div>
                 <div class="info">
                     <strong>${loc.name}</strong>
                 </div>
-                <div class="match-badge">매칭 점수: ${loc.score}</div>
+                <div class="match-badge">적합도 점수: ${loc.score}</div>
             </div>
         `;
     });
+
+    // 결과 영역으로 부드럽게 스크롤
+    window.scrollTo({ top: resultArea.offsetTop - 20, behavior: 'smooth' });
 }
 </script>
 
