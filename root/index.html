@@ -55,11 +55,24 @@
 <script>
 // 여행지 데이터베이스 (수정 가능)
 const locations = [
-  { name: "경복궁", accessibility: 5, cost: 2, time: 1 },
-  { name: "남산 서울타워", accessibility: 4, cost: 3, time: 2 },
-  { name: "한강 시민공원", accessibility: 4, cost: 1, time: 1 },
-  { name: "제주도 성산일출봉", accessibility: 2, cost: 4, time: 5 },
-  { name: "부산 해운대", accessibility: 5, cost: 3, time: 4 }
+  // 1. 서울 (Seoul)
+  { name: "경복궁 (Gyeongbokgung)", accessibility: 4, time: 3, cost: 2 },
+  { name: "N서울타워 (N Seoul Tower)", accessibility: 2, time: 3, cost: 4 },
+  { name: "명동 (Myeongdong)", accessibility: 5, time: 4, cost: 4 },
+  { name: "이태원 (Itaewon)", accessibility: 2, time: 3, cost: 4 },
+  { name: "동대문 디자인 플라자 (DDP)", accessibility: 5, time: 3, cost: 2 },
+  { name: "북촌 한옥마을 (Bukchon Hanok Village)", accessibility: 1, time: 3, cost: 1 },
+  { name: "인사동 (Insadong)", accessibility: 4, time: 2, cost: 2 },
+  { name: "청계천 (Cheonggyecheon)", accessibility: 3, time: 2, cost: 1 },
+  { name: "한강 공원 (Hangang Park)", accessibility: 4, time: 4, cost: 1 },
+  { name: "홍대 (Hongdae)", accessibility: 4, time: 4, cost: 3 },
+
+  // 2. 부산 (Busan)
+  { name: "해운대 해수욕장 (Haeundae Beach)", accessibility: 5, time: 3, cost: 2 },
+  { name: "광안리 해수욕장 (Gyeongalli Beach)", accessibility: 4, time: 2, cost: 2 },
+  { name: "자갈치 시장 (Jagalchi Market)", accessibility: 3, time: 2, cost: 3 },
+  { name: "태종대 (Taejongdae)", accessibility: 2, time: 5, cost: 2 },
+  { name: "부산타워 (Busan Tower)", accessibility: 3, time: 2, cost: 3 }
 ];
 
 function runRecommend() {
