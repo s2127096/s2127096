@@ -3,20 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>カスタマイズされた旅行ガイドサービス</title>
-    <link rel="stylesheet" href="style.css">
+    <title>가상 여행 가이드 서비스 (Virtual Travel Guide)</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; line-height: 1.6; margin: 0; padding: 0; background: #f4f4f4; }
+        header { background: #333; color: #fff; padding: 1rem; text-align: center; }
+        .container { padding: 20px; max-width: 1000px; margin: auto; }
+        .filter-section { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .map-area { background: #ddd; height: 400px; display: flex; align-items: center; justify-content: center; border-radius: 8px; margin-bottom: 20px; font-weight: bold; }
+        .result-box { background: #e7f3ff; padding: 15px; border-left: 5px solid #2196F3; display: none; }
+        button { padding: 10px 15px; margin-right: 10px; cursor: pointer; border: none; border-radius: 5px; background: #2196F3; color: white; transition: 0.3s; }
+        button:hover { background: #0b7dda; }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>カスタマイズされた旅行ガイドサービス</h1>
-    </header>
-    <section>
-        <p>ここでは、交通弱者や時間、予算が限られた人々のためにカスタマイズされた旅行ガイドサービスを提供します。</p>
-        <p>旅行に関するおすすめ情報が提供されます。</p>
+
+<header>
+    <h1>맞춤형 가상 여행 가이드 서비스</h1>
+</header>
+
+<div class="container">
+    <section class="filter-section">
+        <h2>어떤 여행을 원하시나요? (맞춤형 알고리즘 선택)</h2>
+        <p>현재 상황에 맞는 옵션을 선택하면 최적의 가상 경로를 추천합니다.</p>
+        <button onclick="recommend('barrier-free')">교통약자 모드 (배리어 프리)</button>
+        <button onclick="recommend('time-save')">시간 절약 모드 (최단 코스)</button>
+        <button onclick="recommend('low-budget')">비용 절약 모드 (가성비 코스)</button>
     </section>
-    <footer>
-        <p>&copy; 2026 カスタマイズされた旅行ガイドサービス</p>
-    </footer>
-    <script src="script.js"></script>
+
+    <div id="map-view" class="map-area">
+        [ Google Maps API 가동 영역 ]
+        <br>스트리트 뷰 및 위치 정보가 여기에 표시됩니다.
+    </div>
+
+    <div id="result" class="result-box">
+        <h3 id="result-title"></h3>
+        <p id="result-desc"></p>
+    </div>
+</div>
+
+<script>
+    function recommend(type) {
+        const resultBox = document.getElementById('result');
+        const title = document.getElementById('result-title');
+        const desc = document.getElementById('result-desc');
+        const mapView = document.getElementById('map-view');
+
+        resultBox.style.display = 'block';
+
+        if(type === 'barrier-free') {
+            title.innerText = "♿ 교통약자 맞춤형 경로";
+            desc.innerText = "휠체어 이동이 가능한 평지 위주의 경로와 다목적 화장실 위치를 포함한 가이드를 제공합니다. Google Street View로 경사로를 미리 확인하세요.";
+            mapView.style.background = "#b3e5fc"; // 지도 색상 변화로 알고리즘 작동 시연
+            mapView.innerText = "교통약자 전용 스트리트 뷰 활성화 중...";
+        } else if(type === 'time-save') {
+            title.innerText = "⏱️ 시간 절약 최단 경로";
+            desc.innerText = "주요 명소만 빠르게 둘러볼 수 있는 1시간 압축 코스입니다. 이동 시간을 최소화한 동선을 제안합니다.";
+            mapView.style.background = "#c8e6c9";
+            mapView.innerText = "최단 거리 알고리즘 계산 완료...";
+        } else if(type === 'low-budget') {
+            title.innerText = "💰 비용 절약 가성비 경로";
+            desc.innerText = "입장료가 없는 국립공원 및 무료 관람 구역 위주의 경로를 추천합니다. 저예산으로 최대의 경험을 제공합니다.";
+            mapView.style.background = "#fff9c4";
+            mapView.innerText = "무료 테마 코스 탐색 중...";
+        }
+    }
+</script>
+
 </body>
 </html>
