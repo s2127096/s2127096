@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-Travel Guide: 맞춤형 추천 시스템</title>
+    <style>
+        :root { --primary: #0047a0; --accent: #cd2e3a; --bg: #f8f9fa; }
+        body { font-family: 'Malgun Gothic', sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; }
+        header { background: var(--primary); color: white; padding: 2rem 1rem; text-align: center; border-bottom: 5px solid var(--accent); }
+        .container { max-width: 900px; margin: 20px auto; padding: 0 15px; display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; }
+        
+        .config-card, .detail-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: sticky; top: 20px; }
+        h2 { border-left: 5px solid var(--primary); padding-left: 10px; font-size: 1.2rem; }
+        
+        select, button { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd; font-size: 1rem; }
+        button { background: var(--primary); color: white; cursor: pointer; font-weight: bold; border: none; }
+        
+        .result-item { background: white; padding: 12px; margin-bottom: 8px; border-radius: 10px; border: 1px solid #eee; cursor: pointer; transition: 0.2s; display: flex; align-items: center; }
+        .result-item:hover { border-color: var(--primary); background: #f0f7ff; }
+        .rank { background: var(--accent); color: white; width: 25px; height: 25px; border-radius: 50%; text-align: center; font-size: 0.8rem; line-height: 25px; margin-right: 10px; }
+
+        /* 상세 정보 영역 스타일 */
+        .detail-card { min-height: 500px; display: none; }
+        .detail-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 10px; margin: 10px 0; border: 1px solid #ddd; }
+        .map-box { background: #eee; height: 200px; border-radius: 10px; margin-top: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        
+        @media (max-width: 768px) { .container { grid-template-columns: 1fr; } .detail-card { position: static; } }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🇰🇷 K-Travel 맞춤형 추천 가이드</h1>
+</header>
+
+<div class="container">
+    <div class="left-panel">
+        <div class="config-card">
+            <h2>스타일 설정</h2>
+            <label>♿ 교통약자 편의</label>
+            <select id="accInput"><option value="5">매우 중요</option><option value="3">보통</option><option value="1">상관없음</option></select>
+            <label>⏱️ 소요 시간</label>
+            <select id="timeInput"><option value="1">짧게</option><option value="3">보통</option><option value="5">길게</option></select>
+            <label>💸 예산 수준</label>
+            <select id="costInput"><option value="1">알뜰</option><option value="3">보통</option><option value="5">프리미엄</option></select>
+            <button onclick="runRecommend()">추천 시작</button>
+        </div>
+        <div id="resultArea"></div>
+    </div>
+
+    <div class="right-panel">
+        <div id="detailCard" class="detail-card">
+            <h2 id="detTitle">장소 이름</h2>
+            <img id="detImg" src="" alt="장소 사진">
+            <p id="detDesc" style="font-size: 0.9rem; color: #666;"></p>
+            <hr>
+            <div id="map" class="map-box">
+                </div>
+            <button id="mapLinkBtn" style="margin-top:10px; background:#4285F4;">구글 지도에서 크게 보기</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const locations = [
+    { name: "경복궁 (Gyeongbokgung)", accessibility: 4, time: 3, cost: 2, desc: "한국 조선 시대의 정궁으로 가장 규모가 크고 아름다운 궁궐입니다.", img: "https://images.unsplash.com/photo-1590603714824-343513b19075?w=500", map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3162.284700813958!2d126.97425141531238!3d37.57961700237271!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x357ca2c748365555%3A0x60060936359a3c36!2z6rK967O16rav!5e0!3m2!1sko!2skr!4v1640000000000!5m2!1sko!2skr" },
+    { name: "N서울타워 (N Seoul Tower)", accessibility: 2, time: 3, cost: 4, desc: "서울의 랜드마크로 남산 정상에서 환상적인 서울 야경을 즐길 수 있습니다.", img: "https://images.unsplash.com/photo-1538662417748-03823f668579?w=500", map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3163.268577017267!2d126.9858296153118!3d37.55116933269896!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x357ca257a88e6aa9%3A0x5e0282ca6accdf59!2zTuyEnOyauO2fkeyJuO2fkeyXre2DgO2DgA!5e0!3m2!1sko!2skr!4v1640000000001!5m2!1sko!2skr" },
+    { name: "해운대 해수욕장 (Haeundae)", accessibility: 5, time: 3, cost: 2, desc: "부산의 대표적인 해수욕장으로 탁 트인 바다와 빌딩 숲이 어우러진 명소입니다.", img: "https://images.unsplash.com/photo-1590214695027-66c30386cc08?w=500", map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3263.923485542491!2d129.15634581524346!3d35.15869748031971!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x35689297621f37e1%3A0xc486259c7756f70a!2z7ZW07Jq064yAIO2CtOyImOyepeyetQ!5e0!3m2!1sko!2skr!4v1640000000002!5m2!1sko!2skr" }
+    // ... 나머지 12개 장소도 동일한 형식으로 추가 가능
+];
+
+function runRecommend() {
+    const userCondition = {
+        accessibility: parseInt(document.getElementById('accInput').value),
+        time: parseInt(document.getElementById('timeInput').value),
+        cost: parseInt(document.getElementById('costInput').value)
+    };
+
+    const recommended = locations.map(location => {
+        let score = Math.abs(userCondition.accessibility - location.accessibility) +
+                    Math.abs(userCondition.time - location.time) +
+                    Math.abs(userCondition.cost - location.cost);
+        return { ...location, score };
+    }).sort((a, b) => a.score - b.score);
+
+    const resultArea = document.getElementById('resultArea');
+    resultArea.innerHTML = "<h2>추천 결과 (클릭 시 상세정보)</h2>";
+    
+    recommended.forEach((loc, index) => {
+        const item = document.createElement('div');
+        item.className = 'result-item';
+        item.innerHTML = `<div class="rank">${index + 1}</div><div class="info"><strong>${loc.name}</strong></div>`;
+        item.onclick = () => showDetail(loc); // 클릭 이벤트 연결
+        resultArea.appendChild(item);
+    });
+}
+
+function showDetail(loc) {
+    document.getElementById('detailCard').style.display = 'block';
+    document.getElementById('detTitle').innerText = loc.name;
+    document.getElementById('detDesc').innerText = loc.desc;
+    document.getElementById('detImg').src = loc.img;
+    
+    // 구글 맵 iframe 업데이트
+    document.getElementById('map').innerHTML = `<iframe src="${loc.map}" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>`;
+    
+    // 버튼 클릭 시 구글 지도로 이동
+    document.getElementById('mapLinkBtn').onclick = () => window.open(`https://www.google.com/maps/search/${loc.name}`);
+}
+</script>
+</body>
+</html>
