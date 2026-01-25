@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K-Travel Guide: OSS 기반 추천 시스템</title>
+    <title>K-Travel Guide: OSS & 인증 통합 버전</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -12,62 +12,119 @@
         :root { --primary: #0047a0; --accent: #cd2e3a; --bg: #f8f9fa; }
         body { font-family: 'Malgun Gothic', sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; }
         
-        /* 로그인 섹션 */
+        /* --- 로그인 화면 --- */
         #loginSection { display: flex; justify-content: center; align-items: center; height: 100vh; background: #e9ecef; }
-        .login-box { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 350px; text-align: center; border-top: 5px solid var(--primary); }
-        .login-box input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        
-        /* 메인 시스템 */
+        .login-box { 
+            background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+            width: 350px; text-align: center; border-top: 5px solid var(--primary);
+        }
+        .login-box h2 { margin-bottom: 20px; color: var(--primary); }
+        .login-box input { 
+            width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; 
+            border-radius: 8px; box-sizing: border-box; font-size: 1rem;
+        }
+
+        /* --- 메인 시스템 (디자인 복구) --- */
         #mainSystem { display: none; }
-        header { background: var(--primary); color: white; padding: 1.5rem; text-align: center; border-bottom: 5px solid var(--accent); }
-        .container { max-width: 1100px; margin: 20px auto; padding: 0 15px; display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; }
-        .config-card, .detail-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        header { background: var(--primary); color: white; padding: 2rem 1rem; text-align: center; border-bottom: 5px solid var(--accent); }
+        .container { max-width: 1100px; margin: 20px auto; padding: 0 15px; display: grid; grid-template-columns: 1fr 1.2fr; gap: 25px; }
         
-        /* 지도 스타일 */
-        #map { height: 300px; border-radius: 10px; margin-top: 15px; border: 1px solid #ddd; z-index: 1; }
+        /* 왼쪽 패널 스타일 설정 부분 */
+        .config-card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .left-panel { position: sticky; top: 20px; height: fit-content; }
         
-        .result-item { background: white; padding: 12px; margin-bottom: 8px; border-radius: 10px; border: 1px solid #eee; cursor: pointer; display: flex; align-items: center; transition: 0.2s; }
+        h2 { border-left: 5px solid var(--primary); padding-left: 10px; font-size: 1.3rem; margin-bottom: 20px; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; color: #555; }
+        
+        /* 선택 상자와 버튼을 다시 크게 수정 */
+        select { 
+            width: 100%; padding: 15px; margin-bottom: 20px; border-radius: 10px; 
+            border: 1px solid #ddd; font-size: 1.1rem; background-color: #fff;
+        }
+        .action-btn { 
+            width: 100%; padding: 16px; background: var(--primary); color: white; 
+            cursor: pointer; font-weight: bold; border: none; border-radius: 10px; 
+            font-size: 1.1rem; transition: 0.3s; 
+        }
+        .action-btn:hover { background: #003375; transform: translateY(-2px); }
+
+        /* 결과 리스트 */
+        .result-list { max-height: 400px; overflow-y: auto; margin-top: 15px; border-top: 2px solid #eee; padding-top: 10px; }
+        .result-item { 
+            background: white; padding: 15px; margin-bottom: 10px; border-radius: 12px; 
+            border: 1px solid #eee; cursor: pointer; display: flex; align-items: center; transition: 0.2s; 
+        }
         .result-item:hover { border-color: var(--primary); background: #f0f7ff; }
-        .rank { background: var(--accent); color: white; width: 25px; height: 25px; border-radius: 50%; text-align: center; font-size: 0.8rem; line-height: 25px; margin-right: 10px; flex-shrink: 0; }
-        .detail-card img { width: 100%; max-height: 250px; object-fit: cover; border-radius: 10px; margin-bottom: 15px; }
-        button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .rank { 
+            background: var(--accent); color: white; width: 28px; height: 28px; 
+            border-radius: 50%; text-align: center; font-size: 0.9rem; 
+            line-height: 28px; margin-right: 12px; flex-shrink: 0; 
+        }
+
+        /* 오른쪽 상세 카드 */
+        .detail-card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); min-height: 600px; text-align: center; }
+        .detail-card img { width: 100%; max-height: 300px; object-fit: cover; border-radius: 12px; margin: 15px 0; border: 1px solid #ddd; }
         
-        @media (max-width: 768px) { .container { grid-template-columns: 1fr; } }
+        /* 지도 영역 */
+        #map { height: 350px; border-radius: 12px; margin-top: 20px; border: 1px solid #ccc; z-index: 1; }
+        
+        @media (max-width: 768px) { .container { grid-template-columns: 1fr; } .left-panel { position: static; } }
     </style>
 </head>
 <body>
 
 <div id="loginSection">
     <div class="login-box">
-        <h2>🔑 System Login</h2>
+        <h2>🔒 K-Travel Login</h2>
         <input type="text" id="userId" placeholder="ID (nbuweb)">
         <input type="password" id="userPw" placeholder="Password (webweb)">
-        <button onclick="checkAuth()">Login</button>
-        <p id="errMsg" style="color:red; font-size:0.8rem; display:none; margin-top:10px;">인증 정보가 틀립니다.</p>
+        <button class="action-btn" onclick="checkAuth()">Login</button>
+        <p id="errMsg" style="color:red; font-size:0.85rem; display:none; margin-top:15px;">인증 정보가 올바르지 않습니다.</p>
     </div>
 </div>
 
 <div id="mainSystem">
-    <header><h1>🇰🇷 K-Travel 가이드 (Leaflet OSS 버전)</h1></header>
+    <header>
+        <h1>🇰🇷 K-Travel 맞춤형 추천 시스템</h1>
+        <p>당신의 취향을 분석하여 최적의 여행지를 제안합니다.</p>
+    </header>
+
     <div class="container">
         <div class="left-panel">
             <div class="config-card">
                 <h2>스타일 설정</h2>
-                <label>♿ 교통약자</label>
-                <select id="accInput"><option value="5">중요</option><option value="3">보통</option><option value="1">상관없음</option></select>
-                <label>⏱️ 시간</label>
-                <select id="timeInput"><option value="1">짧게</option><option value="3">보통</option><option value="5">길게</option></select>
-                <label>💸 예산</label>
-                <select id="costInput"><option value="1">알뜰</option><option value="3">보통</option><option value="5">프리미엄</option></select>
-                <button onclick="runRecommend()">추천 시작</button>
-                <div id="resultArea" style="margin-top:20px; max-height: 300px; overflow-y: auto;"></div>
+                <label>♿ 교통약자 편의성</label>
+                <select id="accInput">
+                    <option value="5">매우 중요</option>
+                    <option value="3">보통</option>
+                    <option value="1">상관없음</option>
+                </select>
+
+                <label>⏱️ 소요 시간</label>
+                <select id="timeInput">
+                    <option value="1">짧게</option>
+                    <option value="3">보통</option>
+                    <option value="5">길게</option>
+                </select>
+
+                <label>💸 예산 수준</label>
+                <select id="costInput">
+                    <option value="1">알뜰 가성비</option>
+                    <option value="3">보통</option>
+                    <option value="5">프리미엄 럭셔리</option>
+                </select>
+
+                <button class="action-btn" onclick="runRecommend()">추천 분석 시작</button>
+                
+                <div id="resultArea" class="result-list"></div>
             </div>
         </div>
+
         <div class="right-panel">
-            <div id="detailCard" class="detail-card" style="display:none;">
-                <h2 id="detTitle"></h2>
-                <img id="detImg" src="" alt="장소">
-                <p id="detDesc" style="color:#666; font-size:0.9rem;"></p>
+            <div id="detailCard" class="detail-card">
+                <h2 id="detTitle">장소 이름</h2>
+                <img id="detImg" src="" alt="장소 이미지">
+                <p id="detDesc" style="line-height:1.7; color:#444; text-align: left; padding: 0 10px;"></p>
                 <div id="map"></div>
             </div>
         </div>
@@ -75,64 +132,82 @@
 </div>
 
 <script>
-let myMap; // 지도를 담을 변수
+let myMap;
+let marker;
 
 function checkAuth() {
-    if(document.getElementById('userId').value === 'nbuweb' && document.getElementById('userPw').value === 'webweb') {
+    const id = document.getElementById('userId').value;
+    const pw = document.getElementById('userPw').value;
+    if (id === 'nbuweb' && pw === 'webweb') {
         document.getElementById('loginSection').style.display = 'none';
         document.getElementById('mainSystem').style.display = 'block';
-        initMap(); // 로그인 성공 시 지도 초기화
-    } else { document.getElementById('errMsg').style.display = 'block'; }
+        initLeafletMap(); // 로그인 후 지도 로드
+    } else {
+        document.getElementById('errMsg').style.display = 'block';
+    }
 }
 
-function initMap() {
-    // OpenStreetMap 패키지를 사용하여 지도 초기화 (기본 서울 좌표)
-    myMap = L.map('map').setView([37.5665, 126.9780], 13);
+function initLeafletMap() {
+    myMap = L.map('map').setView([37.5665, 126.9780], 12);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
+        attribution: '&copy; OpenStreetMap'
     }).addTo(myMap);
 }
 
 const locations = [
-    { name: "경복궁", accessibility: 4, time: 3, cost: 2, desc: "한국의 미를 느낄 수 있는 궁궐입니다.", img: "Gyeongbokgung.png", lat: 37.5796, lng: 126.9770 },
-    { name: "N서울타워", accessibility: 2, time: 3, cost: 4, desc: "남산 정상에서 서울을 내려다봅니다.", img: "N_Seoul_Tower.png", lat: 37.5511, lng: 126.9882 },
-    { name: "해운대 해수욕장", accessibility: 5, time: 3, cost: 2, desc: "부산의 대표적인 해수욕장입니다.", img: "Haeundae.png", lat: 35.1587, lng: 129.1604 }
-    // ... 나머지 12개 장소도 동일하게 추가
+    { name: "경복궁", accessibility: 4, time: 3, cost: 2, desc: "조선 시대의 법궁으로 평지가 많아 걷기 좋으며 한국 전통미를 느낄 수 있습니다.", img: "Gyeongbokgung.png", lat: 37.5796, lng: 126.9770 },
+    { name: "N서울타워", accessibility: 2, time: 3, cost: 4, desc: "남산 정상의 랜드마크입니다. 야경이 매우 아름다우며 케이블카 이용이 가능합니다.", img: "N_Seoul_Tower.png", lat: 37.5511, lng: 126.9882 },
+    { name: "명동", accessibility: 5, time: 4, cost: 4, desc: "쇼핑과 먹거리의 중심지입니다. 보행자 천국으로 이동이 매우 편리합니다.", img: "Myeongdong.png", lat: 37.5593, lng: 126.9860 },
+    { name: "DDP", accessibility: 5, time: 3, cost: 2, desc: "현대적 건축의 정수로 전 구역 배리어 프리가 완벽하게 적용된 디자인 명소입니다.", img: "DDP.png", lat: 37.5668, lng: 127.0094 },
+    { name: "북촌 한옥마을", accessibility: 1, time: 3, cost: 1, desc: "전통 한옥이 보존된 마을로 경사가 급해 도보 여행의 묘미가 있습니다.", img: "Bukchon.png", lat: 37.5826, lng: 126.9834 },
+    { name: "인사동", accessibility: 4, time: 2, cost: 2, desc: "한국의 전통 소품과 갤러리가 가득한 거리입니다. 산책하기 좋습니다.", img: "Insadong.png", lat: 37.5744, lng: 126.9854 },
+    { name: "해운대 해수욕장", accessibility: 5, time: 3, cost: 2, desc: "부산의 대표 해변으로 탁 트인 바다와 현대적인 빌딩 숲이 조화를 이룹니다.", img: "Haeundae.png", lat: 35.1587, lng: 129.1604 },
+    { name: "광안리 해수욕장", accessibility: 4, time: 2, cost: 2, desc: "광안대교 야경과 버스킹 공연이 낭만적인 부산의 핫플레이스입니다.", img: "Gwangalli.png", lat: 35.1531, lng: 129.1189 },
+    { name: "태종대", accessibility: 2, time: 5, cost: 2, desc: "기암괴석과 바다가 어우러진 절경을 볼 수 있는 부산의 명승지입니다.", img: "Taejongdae.png", lat: 35.0531, lng: 129.0827 },
+    { name: "자갈치 시장", accessibility: 3, time: 2, cost: 3, desc: "한국 최대의 수산시장으로 활기 넘치는 부산의 모습을 볼 수 있습니다.", img: "Jagalchi_Market.png", lat: 35.0968, lng: 129.0306 }
+    // (필요시 장소를 더 추가할 수 있습니다)
 ];
 
 function runRecommend() {
-    const user = { acc: parseInt(document.getElementById('accInput').value), time: parseInt(document.getElementById('timeInput').value), cost: parseInt(document.getElementById('costInput').value) };
+    const user = {
+        acc: parseInt(document.getElementById('accInput').value),
+        time: parseInt(document.getElementById('timeInput').value),
+        cost: parseInt(document.getElementById('costInput').value)
+    };
+
     const recommended = locations.map(loc => {
-        let score = Math.abs(user.acc - loc.accessibility) + Math.abs(user.time - loc.time) + Math.abs(user.cost - loc.cost);
+        let score = Math.abs(user.acc - loc.accessibility) +
+                    Math.abs(user.time - loc.time) +
+                    Math.abs(user.cost - loc.cost);
         return { ...loc, score };
     }).sort((a, b) => a.score - b.score);
 
-    const area = document.getElementById('resultArea');
-    area.innerHTML = "";
-    recommended.forEach((loc, i) => {
+    const resultArea = document.getElementById('resultArea');
+    resultArea.innerHTML = "";
+    
+    recommended.forEach((loc, index) => {
         const div = document.createElement('div');
         div.className = 'result-item';
-        div.innerHTML = `<div class="rank">${i+1}</div><strong>${loc.name}</strong>`;
+        div.innerHTML = `<div class="rank">${index + 1}</div><div><strong>${loc.name}</strong></div>`;
         div.onclick = () => showDetail(loc);
-        area.appendChild(div);
+        resultArea.appendChild(div);
     });
     showDetail(recommended[0]);
 }
 
-let marker;
 function showDetail(loc) {
     document.getElementById('detailCard').style.display = 'block';
     document.getElementById('detTitle').innerText = loc.name;
     document.getElementById('detDesc').innerText = loc.desc;
     document.getElementById('detImg').src = loc.img;
 
-    // 지도 중심 이동 및 마커 표시
+    // Leaflet 마커 및 위치 이동
     myMap.setView([loc.lat, loc.lng], 15);
     if (marker) myMap.removeLayer(marker);
     marker = L.marker([loc.lat, loc.lng]).addTo(myMap)
-        .bindPopup(loc.name).openPopup();
+        .bindPopup(`<b>${loc.name}</b>`).openPopup();
     
-    // 리플릿 지도가 깨지지 않도록 강제 리사이즈 호출
+    // 지도가 깨지지 않도록 리사이즈 트리거
     setTimeout(() => { myMap.invalidateSize(); }, 200);
 }
 </script>
