@@ -3,75 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K-Travel Guide: OSS & 인증 통합 버전</title>
+    <title>K-Travel Guide: 서울/부산 통합 에디션</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <style>
         :root { --primary: #0047a0; --accent: #cd2e3a; --bg: #f8f9fa; }
-        body { font-family: 'Malgun Gothic', sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; }
+        /* 부산 테마용 변수 */
+        .busan-theme { --primary: #cd2e3a; --accent: #0047a0; }
         
-        /* --- 로그인 화면 --- */
+        body { font-family: 'Malgun Gothic', sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; transition: 0.3s; }
+        
+        /* 로그인 화면 */
         #loginSection { display: flex; justify-content: center; align-items: center; height: 100vh; background: #e9ecef; }
-        .login-box { 
-            background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
-            width: 350px; text-align: center; border-top: 5px solid var(--primary);
-        }
-        .login-box h2 { margin-bottom: 20px; color: var(--primary); }
-        .login-box input { 
-            width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; 
-            border-radius: 8px; box-sizing: border-box; font-size: 1rem;
-        }
+        .login-box { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 350px; text-align: center; border-top: 5px solid var(--primary); }
 
-        /* --- 메인 시스템 (디자인 복구) --- */
+        /* 메인 시스템 */
         #mainSystem { display: none; }
-        header { background: var(--primary); color: white; padding: 2rem 1rem; text-align: center; border-bottom: 5px solid var(--accent); }
-        .container { max-width: 1100px; margin: 20px auto; padding: 0 15px; display: grid; grid-template-columns: 1fr 1.2fr; gap: 25px; }
+        header { background: var(--primary); color: white; padding: 1.5rem; text-align: center; border-bottom: 5px solid var(--accent); transition: 0.3s; }
         
-        /* 왼쪽 패널 스타일 설정 부분 */
-        .config-card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .left-panel { position: sticky; top: 20px; height: fit-content; }
-        
-        h2 { border-left: 5px solid var(--primary); padding-left: 10px; font-size: 1.3rem; margin-bottom: 20px; }
-        label { display: block; font-weight: bold; margin-bottom: 8px; color: #555; }
-        
-        /* 선택 상자와 버튼을 다시 크게 수정 */
-        select { 
-            width: 100%; padding: 15px; margin-bottom: 20px; border-radius: 10px; 
-            border: 1px solid #ddd; font-size: 1.1rem; background-color: #fff;
-        }
-        .action-btn { 
-            width: 100%; padding: 16px; background: var(--primary); color: white; 
-            cursor: pointer; font-weight: bold; border: none; border-radius: 10px; 
-            font-size: 1.1rem; transition: 0.3s; 
-        }
-        .action-btn:hover { background: #003375; transform: translateY(-2px); }
+        /* 도시 전환 버튼 */
+        .city-toggle { display: flex; gap: 10px; justify-content: center; margin: 20px 0; }
+        .city-btn { padding: 10px 30px; border-radius: 20px; border: 2px solid var(--primary); background: white; color: var(--primary); cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .city-btn.active { background: var(--primary); color: white; }
 
-        /* 결과 리스트 */
-        .result-list { max-height: 400px; overflow-y: auto; margin-top: 15px; border-top: 2px solid #eee; padding-top: 10px; }
-        .result-item { 
-            background: white; padding: 15px; margin-bottom: 10px; border-radius: 12px; 
-            border: 1px solid #eee; cursor: pointer; display: flex; align-items: center; transition: 0.2s; 
-        }
-        .result-item:hover { border-color: var(--primary); background: #f0f7ff; }
-        .rank { 
-            background: var(--accent); color: white; width: 28px; height: 28px; 
-            border-radius: 50%; text-align: center; font-size: 0.9rem; 
-            line-height: 28px; margin-right: 12px; flex-shrink: 0; 
-        }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 15px; display: grid; grid-template-columns: 1fr 1.2fr; gap: 25px; }
+        .config-card, .detail-card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        
+        select, .action-btn { width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 10px; border: 1px solid #ddd; font-size: 1.1rem; }
+        .action-btn { background: var(--primary); color: white; cursor: pointer; font-weight: bold; border: none; }
+        
+        .result-list { max-height: 350px; overflow-y: auto; margin-top: 15px; border-top: 2px solid #eee; }
+        .result-item { padding: 15px; margin-bottom: 10px; border-radius: 12px; border: 1px solid #eee; cursor: pointer; display: flex; align-items: center; background: white; }
+        .rank { background: var(--accent); color: white; width: 25px; height: 25px; border-radius: 50%; text-align: center; font-size: 0.8rem; line-height: 25px; margin-right: 12px; }
 
-        /* 오른쪽 상세 카드 */
-        .detail-card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); min-height: 600px; text-align: center; }
-        .detail-card img { width: 100%; max-height: 300px; object-fit: cover; border-radius: 12px; margin: 15px 0; border: 1px solid #ddd; }
-        
-        /* 지도 영역 */
-        #map { height: 350px; border-radius: 12px; margin-top: 20px; border: 1px solid #ccc; z-index: 1; }
-        
-        @media (max-width: 768px) { .container { grid-template-columns: 1fr; } .left-panel { position: static; } }
+        #map { height: 350px; border-radius: 12px; margin-top: 20px; border: 1px solid #ccc; }
+        .detail-card img { width: 100%; max-height: 250px; object-fit: cover; border-radius: 12px; margin-bottom: 15px; }
+
+        @media (max-width: 768px) { .container { grid-template-columns: 1fr; } }
     </style>
 </head>
-<body>
+<body id="mainBody">
 
 <div id="loginSection">
     <div class="login-box">
@@ -79,52 +52,39 @@
         <input type="text" id="userId" placeholder="ID (nbuweb)">
         <input type="password" id="userPw" placeholder="Password (webweb)">
         <button class="action-btn" onclick="checkAuth()">Login</button>
-        <p id="errMsg" style="color:red; font-size:0.85rem; display:none; margin-top:15px;">인증 정보가 올바르지 않습니다.</p>
     </div>
 </div>
 
 <div id="mainSystem">
     <header>
-        <h1>🇰🇷 K-Travel 맞춤형 추천 시스템</h1>
-        <p>당신의 취향을 분석하여 최적의 여행지를 제안합니다.</p>
+        <h1 id="headerTitle">🇰🇷 서울 여행 가이드</h1>
+        <p>도시를 선택하고 당신의 취향을 입력하세요.</p>
     </header>
+
+    <div class="city-toggle">
+        <button id="btnSeoul" class="city-btn active" onclick="switchCity('Seoul')">서울 (Seoul)</button>
+        <button id="btnBusan" class="city-btn" onclick="switchCity('Busan')">부산 (Busan)</button>
+    </div>
 
     <div class="container">
         <div class="left-panel">
             <div class="config-card">
-                <h2>스타일 설정</h2>
-                <label>♿ 교통약자 편의성</label>
-                <select id="accInput">
-                    <option value="5">매우 중요</option>
-                    <option value="3">보통</option>
-                    <option value="1">상관없음</option>
-                </select>
-
-                <label>⏱️ 소요 시간</label>
-                <select id="timeInput">
-                    <option value="1">짧게</option>
-                    <option value="3">보통</option>
-                    <option value="5">길게</option>
-                </select>
-
+                <h2 id="configTitle">서울 스타일 설정</h2>
+                <label>♿ 교통약자 편의</label>
+                <select id="accInput"><option value="5">매우 중요</option><option value="3">보통</option><option value="1">상관없음</option></select>
+                <label>⏱️ 선호 시간</label>
+                <select id="timeInput"><option value="1">짧게</option><option value="3">보통</option><option value="5">길게</option></select>
                 <label>💸 예산 수준</label>
-                <select id="costInput">
-                    <option value="1">알뜰 가성비</option>
-                    <option value="3">보통</option>
-                    <option value="5">프리미엄 럭셔리</option>
-                </select>
-
-                <button class="action-btn" onclick="runRecommend()">추천 분석 시작</button>
-                
+                <select id="costInput"><option value="1">가성비</option><option value="3">보통</option><option value="5">럭셔리</option></select>
+                <button class="action-btn" onclick="runRecommend()">맞춤 여행지 분석</button>
                 <div id="resultArea" class="result-list"></div>
             </div>
         </div>
-
         <div class="right-panel">
-            <div id="detailCard" class="detail-card">
-                <h2 id="detTitle">장소 이름</h2>
-                <img id="detImg" src="" alt="장소 이미지">
-                <p id="detDesc" style="line-height:1.7; color:#444; text-align: left; padding: 0 10px;"></p>
+            <div id="detailCard" class="detail-card" style="display:none;">
+                <h2 id="detTitle"></h2>
+                <img id="detImg" src="" alt="장소">
+                <p id="detDesc" style="line-height:1.6; text-align:left;"></p>
                 <div id="map"></div>
             </div>
         </div>
@@ -132,41 +92,70 @@
 </div>
 
 <script>
-let myMap;
-let marker;
+let myMap, marker;
+let currentCity = 'Seoul';
+
+const locations = [
+    // 서울 (10개)
+    { city: 'Seoul', name: "경복궁", accessibility: 4, time: 3, cost: 2, desc: "한국의 역사를 상징하는 정궁입니다.", img: "Gyeongbokgung.png", lat: 37.5796, lng: 126.9770 },
+    { city: 'Seoul', name: "N서울타워", accessibility: 2, time: 3, cost: 4, desc: "남산 정상의 랜드마크입니다.", img: "N_Seoul_Tower.png", lat: 37.5511, lng: 126.9882 },
+    { city: 'Seoul', name: "명동", accessibility: 5, time: 4, cost: 4, desc: "쇼핑과 먹거리의 중심지입니다.", img: "Myeongdong.png", lat: 37.5593, lng: 126.9860 },
+    { city: 'Seoul', name: "DDP", accessibility: 5, time: 3, cost: 2, desc: "미래지향적 디자인의 명소입니다.", img: "DDP.png", lat: 37.5668, lng: 127.0094 },
+    { city: 'Seoul', name: "북촌 한옥마을", accessibility: 1, time: 3, cost: 1, desc: "전통 한옥의 정취가 살아있습니다.", img: "Bukchon.png", lat: 37.5826, lng: 126.9834 },
+    { city: 'Seoul', name: "인사동", accessibility: 4, time: 2, cost: 2, desc: "전통 문화와 갤러리가 가득합니다.", img: "Insadong.png", lat: 37.5744, lng: 126.9854 },
+    { city: 'Seoul', name: "청계천", accessibility: 3, time: 2, cost: 1, desc: "도심 속 산책하기 좋은 하천입니다.", img: "Cheonggyecheon.png", lat: 37.5694, lng: 126.9781 },
+    { city: 'Seoul', name: "한강 공원", accessibility: 4, time: 4, cost: 1, desc: "탁 트인 강변에서 휴식하기 좋습니다.", img: "Hangang_Park.png", lat: 37.5284, lng: 126.9332 },
+    { city: 'Seoul', name: "홍대 거리", accessibility: 4, time: 4, cost: 3, desc: "버스킹과 젊음의 에너지가 넘칩니다.", img: "Hongdae.png", lat: 37.5567, lng: 126.9236 },
+    { city: 'Seoul', name: "이태원", accessibility: 2, time: 3, cost: 4, desc: "이국적인 문화와 맛집이 가득합니다.", img: "Itaewon.png", lat: 37.5345, lng: 126.9946 },
+
+    // 부산 (10개)
+    { city: 'Busan', name: "해운대 해수욕장", accessibility: 5, time: 3, cost: 3, desc: "부산 하면 떠오르는 대표 해변입니다.", img: "Haeundae.png", lat: 35.1587, lng: 129.1604 },
+    { city: 'Busan', name: "광안리 해수욕장", accessibility: 4, time: 2, cost: 2, desc: "광안대교 야경이 예술입니다.", img: "Gwangalli.png", lat: 35.1531, lng: 129.1189 },
+    { city: 'Busan', name: "태종대", accessibility: 2, time: 5, cost: 2, desc: "해안 절벽의 웅장한 경관입니다.", img: "Taejongdae.png", lat: 35.0531, lng: 129.0827 },
+    { city: 'Busan', name: "국제시장", accessibility: 4, time: 3, cost: 3, desc: "부산의 역사를 품은 전통 시장입니다.", img: "Gukje_Market.png", lat: 35.1006, lng: 129.0291 },
+    { city: 'Busan', name: "감천 문화마을", accessibility: 1, time: 3, cost: 2, desc: "알록달록한 계단식 마을입니다.", img: "Gamcheon.png", lat: 35.0975, lng: 129.0106 },
+    { city: 'Busan', name: "자갈치 시장", accessibility: 3, time: 2, cost: 3, desc: "신선한 해산물이 가득한 수산시장입니다.", img: "Jagalchi.png", lat: 35.0968, lng: 129.0306 },
+    { city: 'Busan', name: "용궁사", accessibility: 2, time: 4, cost: 2, desc: "바다 위에 지어진 아름다운 절입니다.", img: "Yonggungsa.png", lat: 35.1885, lng: 129.2232 },
+    { city: 'Busan', name: "부산타워", accessibility: 3, time: 2, cost: 3, desc: "부산 시내를 한눈에 조망합니다.", img: "Busan_Tower.png", lat: 35.1007, lng: 129.0326 },
+    { city: 'Busan', name: "송도 케이블카", accessibility: 4, time: 3, cost: 4, desc: "바다 위를 가로지르는 스릴을 즐기세요.", img: "Songdo.png", lat: 35.0763, lng: 129.0169 },
+    { city: 'Busan', name: "광안대교", accessibility: 5, time: 1, cost: 1, desc: "드라이브하며 보는 야경이 최고입니다.", img: "Gwangandaegyo.png", lat: 35.1475, lng: 129.1301 }
+];
 
 function checkAuth() {
-    const id = document.getElementById('userId').value;
-    const pw = document.getElementById('userPw').value;
-    if (id === 'nbuweb' && pw === 'webweb') {
+    if(document.getElementById('userId').value === 'nbuweb' && document.getElementById('userPw').value === 'webweb') {
         document.getElementById('loginSection').style.display = 'none';
         document.getElementById('mainSystem').style.display = 'block';
-        initLeafletMap(); // 로그인 후 지도 로드
-    } else {
-        document.getElementById('errMsg').style.display = 'block';
+        initMap();
     }
 }
 
-function initLeafletMap() {
+function initMap() {
     myMap = L.map('map').setView([37.5665, 126.9780], 12);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap'
-    }).addTo(myMap);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(myMap);
 }
 
-const locations = [
-    { name: "경복궁", accessibility: 4, time: 3, cost: 2, desc: "조선 시대의 법궁으로 평지가 많아 걷기 좋으며 한국 전통미를 느낄 수 있습니다.", img: "Gyeongbokgung.png", lat: 37.5796, lng: 126.9770 },
-    { name: "N서울타워", accessibility: 2, time: 3, cost: 4, desc: "남산 정상의 랜드마크입니다. 야경이 매우 아름다우며 케이블카 이용이 가능합니다.", img: "N_Seoul_Tower.png", lat: 37.5511, lng: 126.9882 },
-    { name: "명동", accessibility: 5, time: 4, cost: 4, desc: "쇼핑과 먹거리의 중심지입니다. 보행자 천국으로 이동이 매우 편리합니다.", img: "Myeongdong.png", lat: 37.5593, lng: 126.9860 },
-    { name: "DDP", accessibility: 5, time: 3, cost: 2, desc: "현대적 건축의 정수로 전 구역 배리어 프리가 완벽하게 적용된 디자인 명소입니다.", img: "DDP.png", lat: 37.5668, lng: 127.0094 },
-    { name: "북촌 한옥마을", accessibility: 1, time: 3, cost: 1, desc: "전통 한옥이 보존된 마을로 경사가 급해 도보 여행의 묘미가 있습니다.", img: "Bukchon.png", lat: 37.5826, lng: 126.9834 },
-    { name: "인사동", accessibility: 4, time: 2, cost: 2, desc: "한국의 전통 소품과 갤러리가 가득한 거리입니다. 산책하기 좋습니다.", img: "Insadong.png", lat: 37.5744, lng: 126.9854 },
-    { name: "해운대 해수욕장", accessibility: 5, time: 3, cost: 2, desc: "부산의 대표 해변으로 탁 트인 바다와 현대적인 빌딩 숲이 조화를 이룹니다.", img: "Haeundae.png", lat: 35.1587, lng: 129.1604 },
-    { name: "광안리 해수욕장", accessibility: 4, time: 2, cost: 2, desc: "광안대교 야경과 버스킹 공연이 낭만적인 부산의 핫플레이스입니다.", img: "Gwangalli.png", lat: 35.1531, lng: 129.1189 },
-    { name: "태종대", accessibility: 2, time: 5, cost: 2, desc: "기암괴석과 바다가 어우러진 절경을 볼 수 있는 부산의 명승지입니다.", img: "Taejongdae.png", lat: 35.0531, lng: 129.0827 },
-    { name: "자갈치 시장", accessibility: 3, time: 2, cost: 3, desc: "한국 최대의 수산시장으로 활기 넘치는 부산의 모습을 볼 수 있습니다.", img: "Jagalchi_Market.png", lat: 35.0968, lng: 129.0306 }
-    // (필요시 장소를 더 추가할 수 있습니다)
-];
+function switchCity(city) {
+    currentCity = city;
+    const body = document.getElementById('mainBody');
+    const headerTitle = document.getElementById('headerTitle');
+    const configTitle = document.getElementById('configTitle');
+    
+    if (city === 'Seoul') {
+        body.classList.remove('busan-theme');
+        headerTitle.innerText = "🇰🇷 서울 여행 가이드";
+        configTitle.innerText = "서울 스타일 설정";
+        document.getElementById('btnSeoul').classList.add('active');
+        document.getElementById('btnBusan').classList.remove('active');
+    } else {
+        body.classList.add('busan-theme');
+        headerTitle.innerText = "⚓ 부산 여행 가이드";
+        configTitle.innerText = "부산 스타일 설정";
+        document.getElementById('btnBusan').classList.add('active');
+        document.getElementById('btnSeoul').classList.remove('active');
+    }
+    document.getElementById('resultArea').innerHTML = ""; // 이전 결과 삭제
+    document.getElementById('detailCard').style.display = "none";
+}
 
 function runRecommend() {
     const user = {
@@ -175,22 +164,22 @@ function runRecommend() {
         cost: parseInt(document.getElementById('costInput').value)
     };
 
-    const recommended = locations.map(loc => {
-        let score = Math.abs(user.acc - loc.accessibility) +
-                    Math.abs(user.time - loc.time) +
-                    Math.abs(user.cost - loc.cost);
+    // 현재 선택된 도시의 데이터만 필터링
+    const filtered = locations.filter(loc => loc.city === currentCity);
+
+    const recommended = filtered.map(loc => {
+        let score = Math.abs(user.acc - loc.accessibility) + Math.abs(user.time - loc.time) + Math.abs(user.cost - loc.cost);
         return { ...loc, score };
     }).sort((a, b) => a.score - b.score);
 
-    const resultArea = document.getElementById('resultArea');
-    resultArea.innerHTML = "";
-    
-    recommended.forEach((loc, index) => {
+    const area = document.getElementById('resultArea');
+    area.innerHTML = "";
+    recommended.forEach((loc, i) => {
         const div = document.createElement('div');
         div.className = 'result-item';
-        div.innerHTML = `<div class="rank">${index + 1}</div><div><strong>${loc.name}</strong></div>`;
+        div.innerHTML = `<div class="rank">${i+1}</div><strong>${loc.name}</strong>`;
         div.onclick = () => showDetail(loc);
-        resultArea.appendChild(div);
+        area.appendChild(div);
     });
     showDetail(recommended[0]);
 }
@@ -200,14 +189,9 @@ function showDetail(loc) {
     document.getElementById('detTitle').innerText = loc.name;
     document.getElementById('detDesc').innerText = loc.desc;
     document.getElementById('detImg').src = loc.img;
-
-    // Leaflet 마커 및 위치 이동
     myMap.setView([loc.lat, loc.lng], 15);
     if (marker) myMap.removeLayer(marker);
-    marker = L.marker([loc.lat, loc.lng]).addTo(myMap)
-        .bindPopup(`<b>${loc.name}</b>`).openPopup();
-    
-    // 지도가 깨지지 않도록 리사이즈 트리거
+    marker = L.marker([loc.lat, loc.lng]).addTo(myMap).bindPopup(loc.name).openPopup();
     setTimeout(() => { myMap.invalidateSize(); }, 200);
 }
 </script>
