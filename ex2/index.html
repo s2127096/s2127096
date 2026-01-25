@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K-Travel Guide: 최종 과제 제출용</title>
+    <title>K-Travel Guide: 최종 데이터 업데이트 버전</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -14,29 +14,29 @@
         
         body { font-family: 'Malgun Gothic', sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; transition: 0.3s; }
         
-        /* --- [복구] 로그인 화면: 다시 크고 웅장하게 --- */
+        /* --- [복구] 시원한 로그인 화면 --- */
         #loginSection { 
             display: flex; justify-content: center; align-items: center; 
             height: 100vh; background: #dee2e6; 
         }
         .login-box { 
-            background: white; padding: 60px 40px; border-radius: 20px; 
+            background: white; padding: 60px 50px; border-radius: 20px; 
             box-shadow: 0 15px 35px rgba(0,0,0,0.2); 
-            width: 100%; max-width: 450px; /* 폭을 넓힘 */
-            text-align: center; border-top: 8px solid var(--primary);
+            width: 100%; max-width: 500px; 
+            text-align: center; border-top: 10px solid var(--primary);
         }
-        .login-box h2 { font-size: 2rem; margin-bottom: 30px; color: var(--primary); }
+        .login-box h2 { font-size: 2.2rem; margin-bottom: 35px; color: var(--primary); }
         .login-box input { 
-            width: 100%; padding: 18px; margin: 12px 0; border: 1px solid #ccc; 
-            border-radius: 12px; box-sizing: border-box; font-size: 1.1rem;
+            width: 100%; padding: 20px; margin: 15px 0; border: 1px solid #ccc; 
+            border-radius: 12px; box-sizing: border-box; font-size: 1.2rem;
         }
         .login-btn { 
-            width: 100%; padding: 18px; background: var(--primary); color: white; 
+            width: 100%; padding: 20px; background: var(--primary); color: white; 
             border: none; border-radius: 12px; cursor: pointer; font-weight: bold; 
-            font-size: 1.2rem; margin-top: 20px; transition: 0.3s;
+            font-size: 1.3rem; margin-top: 25px; transition: 0.3s;
         }
 
-        /* --- 메인 시스템 UI --- */
+        /* --- 메인 UI --- */
         #mainSystem { display: none; }
         header { background: var(--primary); color: white; padding: 2.5rem 1rem; text-align: center; border-bottom: 6px solid var(--accent); transition: 0.3s; }
         
@@ -47,7 +47,6 @@
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 50px; display: grid; grid-template-columns: 1fr 1.3fr; gap: 30px; }
         .config-card, .detail-card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
         
-        /* 스타일 설정창 크게 */
         h2 { border-left: 6px solid var(--primary); padding-left: 15px; margin-bottom: 25px; }
         label { display: block; font-weight: bold; margin-bottom: 10px; font-size: 1.1rem; }
         select { width: 100%; padding: 15px; margin-bottom: 25px; border-radius: 10px; border: 1px solid #ddd; font-size: 1.1rem; }
@@ -55,11 +54,10 @@
         
         .result-list { max-height: 400px; overflow-y: auto; margin-top: 20px; border-top: 2px solid #eee; padding-top: 15px; }
         .result-item { padding: 18px; margin-bottom: 12px; border-radius: 15px; border: 1px solid #eee; cursor: pointer; display: flex; align-items: center; background: #fff; transition: 0.2s; }
-        .result-item:hover { border-color: var(--primary); transform: translateX(5px); }
         .rank { background: var(--accent); color: white; width: 30px; height: 30px; border-radius: 50%; text-align: center; font-size: 1rem; line-height: 30px; margin-right: 15px; flex-shrink: 0; }
 
         #map { height: 400px; border-radius: 15px; margin-top: 25px; border: 1px solid #ccc; z-index: 1; }
-        .detail-card img { width: 100%; max-height: 300px; object-fit: cover; border-radius: 15px; margin-bottom: 20px; }
+        .detail-card img { width: 100%; max-height: 300px; object-fit: cover; border-radius: 15px; margin-bottom: 20px; border: 1px solid #eee; }
 
         @media (max-width: 850px) { .container { grid-template-columns: 1fr; } }
     </style>
@@ -72,19 +70,19 @@
         <input type="text" id="userId" placeholder="아이디 (nbuweb)">
         <input type="password" id="userPw" placeholder="비밀번호 (webweb)">
         <button class="login-btn" onclick="checkAuth()">시스템 접속</button>
-        <p id="errMsg" style="color:red; display:none; margin-top:20px; font-weight:bold;">접속 정보가 올바르지 않습니다.</p>
+        <p id="errMsg" style="color:red; display:none; margin-top:20px; font-weight:bold;">인증 정보가 틀립니다.</p>
     </div>
 </div>
 
 <div id="mainSystem">
     <header>
         <h1 id="headerTitle">🇰🇷 서울 맞춤 여행 가이드</h1>
-        <p>원하는 조건을 선택하면 최적의 장소를 맵으로 보여드립니다.</p>
+        <p>새롭게 업데이트된 최신 데이터로 최적의 장소를 추천합니다.</p>
     </header>
 
     <div class="city-toggle">
-        <button id="btnSeoul" class="city-btn active" onclick="switchCity('Seoul')">SEOUL (서울)</button>
-        <button id="btnBusan" class="city-btn" onclick="switchCity('Busan')">BUSAN (부산)</button>
+        <button id="btnSeoul" class="city-btn active" onclick="switchCity('Seoul')">서울 (SEOUL)</button>
+        <button id="btnBusan" class="city-btn" onclick="switchCity('Busan')">부산 (BUSAN)</button>
     </div>
 
     <div class="container">
@@ -93,34 +91,25 @@
                 <h2 id="configTitle">서울 스타일 설정</h2>
                 <label>♿ 교통약자 편의성</label>
                 <select id="accInput">
-                    <option value="5">매우 중요 / 우수</option>
-                    <option value="3">보통</option>
-                    <option value="1">상관없음</option>
+                    <option value="5">매우 중요</option><option value="4">중요</option><option value="3">보통</option><option value="1">상관없음</option>
                 </select>
-
                 <label>⏱️ 희망 소요 시간</label>
                 <select id="timeInput">
-                    <option value="5">길게 (여유롭게)</option>
-                    <option value="3">보통</option>
-                    <option value="1">짧게 (핵심만)</option>
+                    <option value="5">매우 길게</option><option value="4">길게</option><option value="3">보통</option><option value="2">짧게</option><option value="1">매우 짧게</option>
                 </select>
-
                 <label>💸 예산 수준</label>
                 <select id="costInput">
-                    <option value="5">럭셔리 / 프리미엄</option>
-                    <option value="3">보통</option>
-                    <option value="1">알뜰 / 가성비</option>
+                    <option value="5">매우 높음</option><option value="4">높음</option><option value="3">보통</option><option value="2">낮음</option><option value="1">가성비</option>
                 </select>
-
-                <button class="action-btn" onclick="runRecommend()">맞춤 장소 분석 시작</button>
+                <button class="action-btn" onclick="runRecommend()">맞춤 분석 시작</button>
                 <div id="resultArea" class="result-list"></div>
             </div>
         </div>
 
         <div class="right-panel">
             <div id="detailCard" class="detail-card" style="display:none;">
-                <h2 id="detTitle">장소명</h2>
-                <img id="detImg" src="" alt="관광지 이미지">
+                <h2 id="detTitle"></h2>
+                <img id="detImg" src="" alt="관광지">
                 <p id="detDesc" style="line-height:1.8; color:#444; font-size:1.05rem; text-align:left;"></p>
                 <div id="map"></div>
             </div>
@@ -132,31 +121,31 @@
 let myMap, marker;
 let currentCity = 'Seoul';
 
-// [데이터 업데이트] 보내주신 표 데이터 그대로 입력 (교통약자, 시간, 예산 순)
+// [데이터 업데이트] 주신 표의 점수를 정확하게 입력 (교통약자, 소요시간, 예산 순)
 const locations = [
     // 서울 (10곳)
-    { city: 'Seoul', name: "경복궁", accessibility: 2, time: 3, cost: 1, desc: "조선 시대의 법궁으로 한국의 역사를 체험할 수 있습니다.", img: "Gyeongbokgung.png", lat: 37.5796, lng: 126.9770 },
-    { city: 'Seoul', name: "서울타워", accessibility: 4, time: 3, cost: 3, desc: "남산 정상의 랜드마크로 환상적인 야경을 선사합니다.", img: "N_Seoul_Tower.png", lat: 37.5511, lng: 126.9882 },
-    { city: 'Seoul', name: "명동", accessibility: 1, time: 2, cost: 3, desc: "대한민국 대표 쇼핑가로 다양한 먹거리와 브랜드가 즐비합니다.", img: "Myeongdong.png", lat: 37.5593, lng: 126.9860 },
-    { city: 'Seoul', name: "DDP", accessibility: 1, time: 2, cost: 1, desc: "세계 최대 규모의 3차원 비정형 건축물로 전시의 메카입니다.", img: "DDP.png", lat: 37.5668, lng: 127.0094 },
-    { city: 'Seoul', name: "북촌한옥마을", accessibility: 5, time: 3, cost: 1, desc: "전통 한옥이 밀집된 지역으로 고유의 정취를 느낄 수 있습니다.", img: "Bukchon.png", lat: 37.5826, lng: 126.9834 },
-    { city: 'Seoul', name: "인사동", accessibility: 2, time: 2, cost: 2, desc: "전통 찻집과 골동품점이 모여있는 한국 문화의 거리입니다.", img: "Insadong.png", lat: 37.5744, lng: 126.9854 },
-    { city: 'Seoul', name: "이태원", accessibility: 3, time: 3, cost: 3, desc: "다양한 국적의 문화와 음식을 즐길 수 있는 이색적인 곳입니다.", img: "Itaewon.png", lat: 37.5345, lng: 126.9946 },
-    { city: 'Seoul', name: "청계천", accessibility: 1, time: 2, cost: 1, desc: "도심 속 흐르는 물줄기를 따라 여유로운 산책이 가능합니다.", img: "Cheonggyecheon.png", lat: 37.5694, lng: 126.9781 },
-    { city: 'Seoul', name: "홍대", accessibility: 2, time: 3, cost: 3, desc: "예술과 버스킹, 클럽 문화가 공존하는 젊음의 거리입니다.", img: "Hongdae.png", lat: 37.5567, lng: 126.9236 },
-    { city: 'Seoul', name: "한강공원", accessibility: 1, time: 3, cost: 1, desc: "서울 시민의 휴식처로 피크닉과 치맥을 즐기기 좋습니다.", img: "Hangang_Park.png", lat: 37.5284, lng: 126.9332 },
+    { city: 'Seoul', name: "경복궁", accessibility: 4, time: 3, cost: 2, desc: "한국의 정궁으로 넓은 평지가 있어 휠체어 이동도 수월합니다.", img: "Gyeongbokgung.png", lat: 37.5796, lng: 126.9770 },
+    { city: 'Seoul', name: "서울타워", accessibility: 1, time: 2, cost: 3, desc: "남산에 위치해 접근성은 낮지만 서울 최고의 야경을 자랑합니다.", img: "N_Seoul_Tower.png", lat: 37.5511, lng: 126.9882 },
+    { city: 'Seoul', name: "명동", accessibility: 5, time: 3, cost: 4, desc: "쇼핑의 중심지로 보행 환경이 잘 정비되어 있습니다.", img: "Myeongdong.png", lat: 37.5593, lng: 126.9860 },
+    { city: 'Seoul', name: "DDP", accessibility: 2, time: 2, cost: 4, desc: "현대적 건축물로 세련된 전시와 패션을 즐길 수 있습니다.", img: "DDP.png", lat: 37.5668, lng: 127.0094 },
+    { city: 'Seoul', name: "북촌한옥마을", accessibility: 5, time: 4, cost: 3, desc: "고즈넉한 한옥의 미를 느낄 수 있는 대표 관광지입니다.", img: "Bukchon.png", lat: 37.5826, lng: 126.9834 },
+    { city: 'Seoul', name: "인사동", accessibility: 3, time: 3, cost: 2, desc: "한국 전통 소품과 갤러리가 모여있는 정겨운 거리입니다.", img: "Insadong.png", lat: 37.5744, lng: 126.9854 },
+    { city: 'Seoul', name: "이태원", accessibility: 4, time: 4, cost: 3, desc: "글로벌한 분위기와 맛집이 가득한 이국적인 동네입니다.", img: "Itaewon.png", lat: 37.5345, lng: 126.9946 },
+    { city: 'Seoul', name: "청계천", accessibility: 3, time: 1, cost: 1, desc: "도심 속 하천을 따라 빠르게 한 바퀴 둘러보기 좋습니다.", img: "Cheonggyecheon.png", lat: 37.5694, lng: 126.9781 },
+    { city: 'Seoul', name: "홍대", accessibility: 5, time: 4, cost: 3, desc: "젊은 예술가들과 버스킹 공연이 끊이지 않는 핫플레이스입니다.", img: "Hongdae.png", lat: 37.5567, lng: 126.9236 },
+    { city: 'Seoul', name: "한강공원", accessibility: 3, time: 2, cost: 1, desc: "탁 트인 강변에서 여유로운 시간을 보내기 최적입니다.", img: "Hangang_Park.png", lat: 37.5284, lng: 126.9332 },
 
     // 부산 (10곳)
-    { city: 'Busan', name: "감천문화마을", accessibility: 5, time: 3, cost: 1, desc: "한국의 산토리니로 불리는 알록달록한 계단식 마을입니다.", img: "Gamcheon.png", lat: 35.0975, lng: 129.0106 },
-    { city: 'Busan', name: "해동용궁사", accessibility: 3, time: 3, cost: 1, desc: "바닷가 절벽에 위치한 국내에서 가장 아름다운 사찰 중 하나입니다.", img: "Yonggungsa.png", lat: 35.1885, lng: 129.2232 },
-    { city: 'Busan', name: "블루라인파크", accessibility: 2, time: 2, cost: 3, desc: "해안 절경을 따라 달리는 해변 열차와 스카이 캡슐입니다.", img: "Blueline.png", lat: 35.1611, lng: 129.1770 },
-    { city: 'Busan', name: "태종대", accessibility: 4, time: 4, cost: 1, desc: "웅장한 해안 기암괴석과 탁 트인 바다 전망이 일품입니다.", img: "Taejongdae.png", lat: 35.0531, lng: 129.0827 },
-    { city: 'Busan', name: "해운대 해수욕장", accessibility: 1, time: 2, cost: 1, desc: "부산을 상징하는 세계적인 해변이자 여름 휴양지입니다.", img: "Haeundae.png", lat: 35.1587, lng: 129.1604 },
-    { city: 'Busan', name: "광안리 해수욕장", accessibility: 1, time: 2, cost: 1, desc: "광안대교의 환상적인 야경과 카페 거리가 유명합니다.", img: "Gwangalli.png", lat: 35.1531, lng: 129.1189 },
-    { city: 'Busan', name: "부산타워", accessibility: 2, time: 2, cost: 2, desc: "용두산 공원에서 부산항과 도심 전경을 감상할 수 있습니다.", img: "Busan_Tower.png", lat: 35.1007, lng: 129.0326 },
-    { city: 'Busan', name: "국제시장", accessibility: 3, time: 3, cost: 1, desc: "부산의 역사를 간직한 시장으로 영화 촬영지로도 유명합니다.", img: "Gukje_Market.png", lat: 35.1006, lng: 129.0291 },
-    { city: 'Busan', name: "엑스더스카이", accessibility: 1, time: 2, cost: 4, desc: "국내 두 번째 높이의 타워에서 즐기는 압도적인 해변 뷰입니다.", img: "Xthesky.png", lat: 35.1601, lng: 129.1685 },
-    { city: 'Busan', name: "씨라이프 아쿠아리움", accessibility: 1, time: 2, cost: 4, desc: "해운대에 위치한 테마형 아쿠아리움으로 볼거리가 풍성합니다.", img: "Sealife.png", lat: 35.1593, lng: 129.1612 }
+    { city: 'Busan', name: "감천문화마을", accessibility: 4, time: 4, cost: 2, desc: "계단식 마을로 독특한 풍경을 선사하는 예술 마을입니다.", img: "Gamcheon.png", lat: 35.0975, lng: 129.0106 },
+    { city: 'Busan', name: "해동용궁사", accessibility: 4, time: 3, cost: 1, desc: "바닷가에 바로 붙어 있는 장엄한 사찰입니다.", img: "Yonggungsa.png", lat: 35.1885, lng: 129.2232 },
+    { city: 'Busan', name: "블루라인파크", accessibility: 2, time: 3, cost: 4, desc: "해안 열차를 타고 부산의 바다를 감상하세요.", img: "Blueline.png", lat: 35.1611, lng: 129.1770 },
+    { city: 'Busan', name: "태종대", accessibility: 4, time: 5, cost: 1, desc: "웅장한 절벽과 등대가 어우러진 최고의 산책 코스입니다.", img: "Taejongdae.png", lat: 35.0531, lng: 129.0827 },
+    { city: 'Busan', name: "해운대 해수욕장", accessibility: 2, time: 2, cost: 1, desc: "부산 하면 떠오르는 대표적인 랜드마크 해변입니다.", img: "Haeundae.png", lat: 35.1587, lng: 129.1604 },
+    { city: 'Busan', name: "광안리 해수욕장", accessibility: 2, time: 2, cost: 1, desc: "광안대교의 야경이 손에 잡힐 듯 가깝게 보입니다.", img: "Gwangalli.png", lat: 35.1531, lng: 129.1189 },
+    { city: 'Busan', name: "부산타워", accessibility: 2, time: 2, cost: 2, desc: "용두산 공원에 위치해 부산 시내를 한눈에 내려다봅니다.", img: "Busan_Tower.png", lat: 35.1007, lng: 129.0326 },
+    { city: 'Busan', name: "국제시장", accessibility: 3, time: 4, cost: 2, desc: "부산의 역사가 살아 숨 쉬는 활기 넘치는 전통 시장입니다.", img: "Gukje_Market.png", lat: 35.1006, lng: 129.0291 },
+    { city: 'Busan', name: "엑스더스카이", accessibility: 5, time: 1, cost: 4, desc: "국내 최고층 빌딩에서 즐기는 압도적인 해변 전망대입니다.", img: "Xthesky.png", lat: 35.1601, lng: 129.1685 },
+    { city: 'Busan', name: "씨라이프 아쿠아리움", accessibility: 1, time: 3, cost: 4, desc: "바다 속 세상을 생생하게 체험할 수 있는 테마파크입니다.", img: "Sealife.png", lat: 35.1593, lng: 129.1612 }
 ];
 
 function checkAuth() {
