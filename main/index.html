@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K-Travel Guide (B2B Solution)</title>
+    <title>韓国旅行ガイド (B2B Solution)</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -14,88 +14,156 @@
         
         body { font-family: 'Meiryo', sans-serif; background: var(--bg); margin: 0; color: #333; }
         
-        /* ログインセクション */
+        /* 로그인 화면 */
         #loginSection { display: flex; justify-content: center; align-items: center; height: 100vh; background: #dee2e6; }
-        .login-box { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
-        .login-box input { width: 100%; padding: 15px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; }
-        .login-btn { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; }
+        .login-box { background: white; padding: 50px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); width: 100%; max-width: 450px; text-align: center; border-top: 10px solid var(--primary); }
+        .login-box h2 { color: var(--primary); margin-bottom: 30px; }
+        .login-box input { width: 100%; padding: 15px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 1.1rem; }
+        .login-btn { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 1.2rem; margin-top: 20px; }
 
-        /* メインシステム */
+        /* 메인 시스템 */
         #mainSystem { display: none; }
         header { background: var(--primary); color: white; padding: 2rem; text-align: center; border-bottom: 5px solid var(--accent); }
         
-        .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; }
-        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
-
-        /* 管理者パネルスタイル */
-        #adminPanel { border: 2px solid var(--admin-color); display: none; }
-        .admin-badge { background: var(--admin-color); color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; margin-bottom: 10px; display: inline-block; }
-        .admin-input { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px; }
-
-        #map { height: 400px; border-radius: 10px; margin-top: 15px; }
-        .result-item { padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; display: flex; align-items: center; }
-        .result-item:hover { background: #f0f4f8; }
-        .rank { background: var(--accent); color: white; width: 25px; height: 25px; border-radius: 50%; text-align: center; margin-right: 15px; font-size: 0.9rem; line-height: 25px; }
-        
-        .city-btn { padding: 10px 30px; border-radius: 20px; border: 2px solid var(--primary); background: white; color: var(--primary); cursor: pointer; font-weight: bold; margin: 0 5px; }
+        .city-toggle { display: flex; gap: 15px; justify-content: center; margin: 30px 0; }
+        .city-btn { padding: 12px 40px; border-radius: 30px; border: 2px solid var(--primary); background: white; color: var(--primary); cursor: pointer; font-weight: bold; font-size: 1.1rem; }
         .city-btn.active { background: var(--primary); color: white; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 50px; display: grid; grid-template-columns: 1fr 1.3fr; gap: 30px; }
+        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.1); margin-bottom: 25px; }
         
-        img { width: 100%; max-height: 200px; object-fit: cover; border-radius: 10px; margin-bottom: 15px; }
+        h2 { border-left: 6px solid var(--primary); padding-left: 15px; margin-bottom: 20px; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 1rem; }
+        select { width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #ddd; font-size: 1rem; }
+        .action-btn { width: 100%; padding: 15px; background: var(--primary); color: white; cursor: pointer; font-weight: bold; border: none; border-radius: 10px; font-size: 1.1rem; }
+
+        /* 관리자 패널 */
+        #adminPanel { border: 2px solid var(--admin-color); display: none; }
+        .admin-badge { background: var(--admin-color); color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; margin-bottom: 15px; display: inline-block; }
+        .admin-input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        .score-input-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        .score-input-group div { flex: 1; }
+        .score-input-group label { font-size: 0.8rem; margin-bottom: 5px; }
+        .score-input-group input { width: 100%; }
+
+        /* 결과 리스트 */
+        .result-list { max-height: 500px; overflow-y: auto; margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px; }
+        .result-item { padding: 15px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #eee; background: #fff; display: flex; align-items: center; justify-content: space-between; transition: 0.2s; }
+        .result-item:hover { background: #f8f9fa; }
+        .item-info { display: flex; align-items: center; cursor: pointer; flex-grow: 1; }
+        .rank { background: var(--accent); color: white; width: 30px; height: 30px; border-radius: 50%; text-align: center; font-size: 1rem; line-height: 30px; margin-right: 15px; flex-shrink: 0; }
+        
+        .delete-btn { background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; margin-left: 10px; }
+        .delete-btn:hover { background: #c82333; }
+
+        /* 지도 및 상세 */
+        #map { height: 400px; border-radius: 15px; margin-top: 25px; border: 1px solid #ccc; z-index: 1; }
+        img { width: 100%; max-height: 250px; object-fit: contain; border-radius: 15px; margin-bottom: 20px; background: #eee; }
     </style>
 </head>
 <body id="mainBody">
 
 <div id="loginSection">
     <div class="login-box">
-        <h2>K-Travel Guide Login</h2>
-        <input type="text" id="userId" placeholder="ID (nbuweb or admin)">
-        <input type="password" id="userPw" placeholder="Password">
-        <button class="login-btn" onclick="checkAuth()">ログイン</button>
-        <p id="errMsg" style="color:red; display:none; margin-top:15px;">認証情報が正しくありません。</p>
+        <h2>🔒 K-Travel Guide</h2>
+        <input type="text" id="userId" placeholder="ユーザーID (nbuweb / admin)">
+        <input type="password" id="userPw" placeholder="パスワード">
+        <button class="login-btn" onclick="checkAuth()">システムにログイン</button>
+        <p id="errMsg" style="color:red; display:none; margin-top:20px; font-weight:bold;">認証情報が正しくありません。</p>
     </div>
 </div>
 
 <div id="mainSystem">
     <header>
-        <h1 id="headerTitle">韓国旅行B2B提案システム</h1>
-        <p>旅行会社向け：日本人顧客への最適観光地提案ツール</p>
+        <h1 id="headerTitle">日本人向けのソウル旅行ガイド</h1>
+        <p>あなたの好みに合わせた最適な場所を提案します。</p>
     </header>
 
-    <div style="text-align:center; margin: 20px 0;">
-        <button id="btnSeoul" class="city-btn active" onclick="switchCity('Seoul')">SEOUL</button>
-        <button id="btnBusan" class="city-btn" onclick="switchCity('Busan')">BUSAN</button>
+    <div class="city-toggle">
+        <button id="btnSeoul" class="city-btn active" onclick="switchCity('Seoul')">ソウル (SEOUL)</button>
+        <button id="btnBusan" class="city-btn" onclick="switchCity('Busan')">釜山 (BUSAN)</button>
     </div>
 
     <div class="container">
         <div class="left-panel">
+            
             <div id="adminPanel" class="card">
-                <span class="admin-badge">管理者モード(CMS)</span>
-                <h3>新しい観光地の登録</h3>
-                <input type="text" id="newName" class="admin-input" placeholder="観光地名">
-                <textarea id="newDesc" class="admin-input" placeholder="説明文"></textarea>
-                <div style="display:flex; gap:5px;">
+                <span class="admin-badge">管理者モード (CMS)</span>
+                <h3>🛠️ 新しい観光地の登録</h3>
+                
+                <label>都市選択</label>
+                <select id="newCity" class="admin-input">
+                    <option value="Seoul">Seoul</option>
+                    <option value="Busan">Busan</option>
+                </select>
+                
+                <input type="text" id="newName" class="admin-input" placeholder="観光地名 (例: 景福宮)">
+                <textarea id="newDesc" class="admin-input" rows="2" placeholder="説明文"></textarea>
+                
+                <div class="score-input-group">
+                    <div>
+                        <label>♿ バリアフリー (1-5)</label>
+                        <input type="number" id="newAcc" class="admin-input" min="1" max="5" value="3">
+                    </div>
+                    <div>
+                        <label>⏱️ 所要時間 (1-5)</label>
+                        <input type="number" id="newTime" class="admin-input" min="1" max="5" value="3">
+                    </div>
+                    <div>
+                        <label>💸 予算 (1-5)</label>
+                        <input type="number" id="newCost" class="admin-input" min="1" max="5" value="3">
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:10px;">
                     <input type="number" id="newLat" class="admin-input" placeholder="緯度(Lat)" step="0.0001">
                     <input type="number" id="newLng" class="admin-input" placeholder="経度(Lng)" step="0.0001">
                 </div>
-                <button onclick="addNewLocation()" style="width:100%; padding:10px; background:var(--admin-color); color:white; border:none; border-radius:5px; cursor:pointer;">システムに追加保存</button>
+                <input type="text" id="newImg" class="admin-input" placeholder="画像ファイル名 (省略可)">
+
+                <button class="action-btn" onclick="addNewLocation()" style="background:var(--admin-color); margin-top:10px;">データベースに追加</button>
             </div>
 
             <div class="card">
-                <h3>条件設定</h3>
-                <label>♿ バリアフリー</label>
-                <select id="accInput" class="admin-input"><option value="5">重視</option><option value="3">普通</option><option value="1">気にしない</option></select>
+                <h2 id="configTitle">ソウルのスタイル設定</h2>
+                
+                <label>♿ バリアフリーの重要性</label>
+                <select id="accInput">
+                    <option value="5">非常に重要 (5)</option>
+                    <option value="4">重要 (4)</option>
+                    <option value="3">普通 (3)</option>
+                    <option value="2">低い (2)</option>
+                    <option value="1">気にしない (1)</option>
+                </select>
+                
+                <label>⏱️ 希望滞在時間 (復活)</label>
+                <select id="timeInput">
+                    <option value="5">とても長く (5)</option>
+                    <option value="4">長く (4)</option>
+                    <option value="3">普通 (3)</option>
+                    <option value="2">短く (2)</option>
+                    <option value="1">とても短く (1)</option>
+                </select>
+                
                 <label>💸 予算レベル</label>
-                <select id="costInput" class="admin-input"><option value="1">コスパ重視</option><option value="3">普通</option><option value="5">ラグジュアリー</option></select>
-                <button class="login-btn" onclick="runRecommend()" style="margin-top:10px;">分析実行</button>
-                <div id="resultArea" style="margin-top:20px;"></div>
+                <select id="costInput">
+                    <option value="5">非常に高い (5)</option>
+                    <option value="4">高い (4)</option>
+                    <option value="3">普通 (3)</option>
+                    <option value="2">低い (2)</option>
+                    <option value="1">コスパ重視 (1)</option>
+                </select>
+                
+                <button class="action-btn" onclick="runRecommend()">おすすめ分析開始</button>
+                <div id="resultArea" class="result-list"></div>
             </div>
         </div>
 
         <div class="right-panel">
             <div id="detailCard" class="card" style="display:none;">
                 <h2 id="detTitle"></h2>
-                <img id="detImg" src="" alt="観光地画像">
-                <p id="detDesc"></p>
+                <img id="detImg" src="" alt="観光地">
+                <p id="detDesc" style="line-height:1.8; color:#444; font-size:1.05rem;"></p>
                 <div id="map"></div>
             </div>
         </div>
@@ -103,26 +171,52 @@
 </div>
 
 <script>
-let myMap, marker, currentCity = 'Seoul';
+let myMap, marker;
+let currentCity = 'Seoul';
+let isAdmin = false; // 관리자 여부 체크
+
+// 초기 데이터 (기존 데이터 유지)
 let locations = [
-    { city: 'Seoul', name: "景福宮", accessibility: 4, cost: 2, desc: "伝統的な王宮。平地が多く歩きやすいです。", img: "https://images.unsplash.com/photo-1538669715515-5c375b207996?w=400", lat: 37.5796, lng: 126.9770 },
-    { city: 'Busan', name: "甘川文化村", accessibility: 2, cost: 1, desc: "絶景が楽しめるアートの街。階段が多いので注意。", img: "https://images.unsplash.com/photo-1590664216212-62e763768c33?w=400", lat: 35.0975, lng: 129.0106 }
+    { id: 1, city: 'Seoul', name: "景福宮 (キョンボックン)", accessibility: 4, time: 3, cost: 2, desc: "韓国を代表する王宮で、平地が多く車椅子やベビーカーでも移動しやすいです。", img: "Gyeongbokgung.png", lat: 37.5796, lng: 126.9770 },
+    { id: 2, city: 'Seoul', name: "Nソウルタワー", accessibility: 1, time: 2, cost: 3, desc: "南山の頂上に位置するランドマークで、ソウルの夜景を一望できます。", img: "N_Seoul_Tower.png", lat: 37.5511, lng: 126.9882 },
+    { id: 3, city: 'Seoul', name: "明洞 (ミョンドン)", accessibility: 5, time: 3, cost: 4, desc: "ショッピングとストリートフードの聖地で、常に活気にあふれています。", img: "Myeongdong.png", lat: 37.5593, lng: 126.9860 },
+    { id: 4, city: 'Seoul', name: "DDP (東大門デザインプラザ)", accessibility: 2, time: 2, cost: 4, desc: "独創的な建築デザインが特徴で、展示やファッションを楽しめる空間です。", img: "DDP.png", lat: 37.5668, lng: 127.0094 },
+    { id: 5, city: 'Seoul', name: "北村韓屋村", accessibility: 5, time: 4, cost: 3, desc: "伝統的な韓国の家屋「韓屋」が保存されており、情緒ある街並みが楽しめます。", img: "Bukchon.png", lat: 37.5826, lng: 126.9834 },
+    { id: 6, city: 'Busan', name: "甘川文化村", accessibility: 4, time: 4, cost: 2, desc: "カラフルな家々が並ぶ絶景が特徴で、「韓国のマチュピチュ」と呼ばれています。", img: "Gamcheon.png", lat: 35.0975, lng: 129.0106 },
+    { id: 7, city: 'Busan', name: "海東龍宮寺", accessibility: 4, time: 3, cost: 1, desc: "海沿いに建てられた珍しい寺院で、壮大な景色を楽しむことができます。", img: "Yonggungsa.png", lat: 35.1885, lng: 129.2232 },
+    { id: 8, city: 'Busan', name: "ブルーラインパーク", accessibility: 2, time: 3, cost: 4, desc: "海岸列車に乗って釜山の美しい海をゆったりと鑑賞できます。", img: "Blueline.png", lat: 35.1611, lng: 129.1770 },
+    { id: 9, city: 'Busan', name: "太宗台 (テジョンデ)", accessibility: 4, time: 5, cost: 1, desc: "断崖絶壁と海が織りなす絶景が魅力の、釜山を代表する景勝地です。", img: "Taejongdae.png", lat: 35.0531, lng: 129.0827 },
+    { id: 10, city: 'Busan', name: "海雲台ビーチ", accessibility: 2, time: 2, cost: 1, desc: "韓国で最も有名なビーチで、周辺には高級ホテルや飲食店が並びます。", img: "Haeundae.png", lat: 35.1587, lng: 129.1604 }
 ];
 
-// PDF 지침 [4-4] 인증 정보 적용
+// 페이지 로드 시 로컬스토리지 데이터 불러오기
+window.onload = function() {
+    const savedData = localStorage.getItem('myTravelLocations');
+    if (savedData) {
+        // 기존 데이터 대신 저장된 데이터로 덮어쓰기 (수정/삭제 반영을 위해)
+        locations = JSON.parse(savedData);
+    } else {
+        // 처음 실행 시 기본 데이터를 로컬스토리지에 저장
+        localStorage.setItem('myTravelLocations', JSON.stringify(locations));
+    }
+};
+
 function checkAuth() {
     const id = document.getElementById('userId').value;
     const pw = document.getElementById('userPw').value;
 
     if (id === 'admin' && pw === 'webadmin') {
+        isAdmin = true;
         document.getElementById('loginSection').style.display = 'none';
         document.getElementById('mainSystem').style.display = 'block';
-        document.getElementById('adminPanel').style.display = 'block';
+        document.getElementById('adminPanel').style.display = 'block'; // 관리자 패널 보임
         initMap();
+        alert("管理者モードでログインしました。データの追加・削除が可能です。");
     } else if (id === 'nbuweb' && pw === 'webweb') {
+        isAdmin = false;
         document.getElementById('loginSection').style.display = 'none';
         document.getElementById('mainSystem').style.display = 'block';
-        document.getElementById('adminPanel').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'none'; // 관리자 패널 숨김
         initMap();
     } else {
         document.getElementById('errMsg').style.display = 'block';
@@ -133,76 +227,134 @@ function initMap() {
     if (myMap) return;
     myMap = L.map('map').setView([37.5665, 126.9780], 12);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(myMap);
-    loadSavedData();
 }
 
 function switchCity(city) {
     currentCity = city;
-    document.getElementById('btnSeoul').classList.toggle('active', city === 'Seoul');
-    document.getElementById('btnBusan').classList.toggle('active', city === 'Busan');
-    runRecommend();
+    const body = document.getElementById('mainBody');
+    if (city === 'Seoul') {
+        body.classList.remove('busan-theme');
+        document.getElementById('headerTitle').innerText = "日本人向けのソウル旅行ガイド";
+        document.getElementById('configTitle').innerText = "ソウルのスタイル設定";
+        document.getElementById('btnSeoul').classList.add('active');
+        document.getElementById('btnBusan').classList.remove('active');
+    } else {
+        body.classList.add('busan-theme');
+        document.getElementById('headerTitle').innerText = "日本人向けの釜山旅行ガイド";
+        document.getElementById('configTitle').innerText = "釜山のスタイル設定";
+        document.getElementById('btnBusan').classList.add('active');
+        document.getElementById('btnSeoul').classList.remove('active');
+    }
+    document.getElementById('resultArea').innerHTML = "";
+    document.getElementById('detailCard').style.display = "none";
 }
 
-// 관리자 데이터 추가 기능 (LocalStorage 활용)
+// 관리자: 장소 추가 함수
 function addNewLocation() {
     const name = document.getElementById('newName').value;
-    const desc = document.getElementById('newDesc').value;
     const lat = parseFloat(document.getElementById('newLat').value);
     const lng = parseFloat(document.getElementById('newLng').value);
 
-    if (!name || isNaN(lat)) { alert("情報を入力してください"); return; }
+    if(!name) { alert("観光地名を入力してください。"); return; }
 
-    const newLoc = { city: currentCity, name, accessibility: 3, cost: 3, desc, img: "https://images.unsplash.com/photo-1493916665398-143bdeabe500?w=400", lat, lng };
-    
-    locations.push(newLoc);
-    
-    // 로컬스토리지에 저장하여 새로고침해도 유지 (PDF CMS 요건 충족)
-    const localData = JSON.parse(localStorage.getItem('myTravelData') || "[]");
-    localData.push(newLoc);
-    localStorage.setItem('myTravelData', JSON.stringify(localData));
+    const newEntry = {
+        id: Date.now(), // 고유 ID 생성
+        city: document.getElementById('newCity').value,
+        name: name,
+        accessibility: parseInt(document.getElementById('newAcc').value),
+        time: parseInt(document.getElementById('newTime').value),
+        cost: parseInt(document.getElementById('newCost').value),
+        desc: document.getElementById('newDesc').value,
+        img: document.getElementById('newImg').value || "default.png",
+        lat: lat || 37.5665,
+        lng: lng || 126.9780
+    };
 
-    alert("新しい観光地をシステムに登録しました！");
+    locations.push(newEntry);
+    saveData(); // 저장 및 갱신
+    
+    alert("新しい観光地を追加しました！");
+    // 입력창 초기화
+    document.getElementById('newName').value = "";
+    document.getElementById('newDesc').value = "";
+    
     runRecommend();
 }
 
-function loadSavedData() {
-    const localData = JSON.parse(localStorage.getItem('myTravelData') || "[]");
-    locations = [...locations, ...localData];
+// 관리자: 장소 삭제 함수
+function deleteLocation(id) {
+    if(confirm("本当にこの観光地を削除しますか？")) {
+        locations = locations.filter(loc => loc.id !== id);
+        saveData(); // 저장 및 갱신
+        runRecommend(); // 리스트 갱신
+    }
 }
 
-function runRecommend() {
-    const userAcc = parseInt(document.getElementById('accInput').value);
-    const userCost = parseInt(document.getElementById('costInput').value);
+// 로컬스토리지 저장 함수
+function saveData() {
+    localStorage.setItem('myTravelLocations', JSON.stringify(locations));
+}
 
-    const filtered = locations.filter(l => l.city === currentCity);
-    const sorted = filtered.sort((a, b) => {
-        const scoreA = Math.abs(a.accessibility - userAcc) + Math.abs(a.cost - userCost);
-        const scoreB = Math.abs(b.accessibility - userAcc) + Math.abs(b.cost - userCost);
-        return scoreA - scoreB;
-    });
+// 추천 알고리즘 (Time 복구됨)
+function runRecommend() {
+    const user = {
+        acc: parseInt(document.getElementById('accInput').value),
+        time: parseInt(document.getElementById('timeInput').value), // Time 값 가져오기
+        cost: parseInt(document.getElementById('costInput').value)
+    };
+
+    const filtered = locations.filter(loc => loc.city === currentCity);
+    
+    // 알고리즘: (접근성 차이) + (시간 차이) + (비용 차이)가 적을수록 상위 노출
+    const recommended = filtered.map(loc => {
+        let score = Math.abs(user.acc - loc.accessibility) + 
+                    Math.abs(user.time - loc.time) + 
+                    Math.abs(user.cost - loc.cost);
+        return { ...loc, score };
+    }).sort((a, b) => a.score - b.score);
 
     const area = document.getElementById('resultArea');
     area.innerHTML = "";
-    sorted.forEach((loc, i) => {
-        const item = document.createElement('div');
-        item.className = 'result-item';
-        item.innerHTML = `<div class="rank">${i+1}</div><div><strong>${loc.name}</strong></div>`;
-        item.onclick = () => showDetail(loc);
-        area.appendChild(item);
+    
+    recommended.forEach((loc, i) => {
+        const div = document.createElement('div');
+        div.className = 'result-item';
+        
+        // 관리자일 때만 삭제 버튼 보이기
+        let deleteBtnHtml = isAdmin ? `<button class="delete-btn" onclick="deleteLocation(${loc.id}); event.stopPropagation();">削除</button>` : '';
+
+        div.innerHTML = `
+            <div class="item-info" onclick="showDetail(${loc.id})">
+                <div class="rank">${i+1}</div>
+                <strong>${loc.name}</strong>
+            </div>
+            ${deleteBtnHtml}
+        `;
+        area.appendChild(div);
     });
-    if(sorted.length > 0) showDetail(sorted[0]);
+
+    if(recommended.length > 0) showDetail(recommended[0].id);
 }
 
-function showDetail(loc) {
+function showDetail(id) {
+    const loc = locations.find(l => l.id === id);
+    if (!loc) return;
+
     document.getElementById('detailCard').style.display = 'block';
     document.getElementById('detTitle').innerText = loc.name;
     document.getElementById('detDesc').innerText = loc.desc;
-    document.getElementById('detImg').src = loc.img;
+    document.getElementById('detImg').src = loc.img.startsWith('http') ? loc.img : (loc.img === 'default.png' ? 'https://via.placeholder.com/400x250?text=No+Image' : loc.img);
+    
     myMap.setView([loc.lat, loc.lng], 15);
     if (marker) myMap.removeLayer(marker);
     marker = L.marker([loc.lat, loc.lng]).addTo(myMap).bindPopup(loc.name).openPopup();
     setTimeout(() => { myMap.invalidateSize(); }, 200);
 }
 </script>
+
+<footer style="text-align:center; padding:30px; color:#888; font-size:0.85rem; background:#f1f3f5; border-top:1px solid #ddd; margin-top:50px;">
+    <p>写真出典：韓国公共著作物自由利用許諾（KOGL第1型）</p>
+    <p>Map data © OpenStreetMap contributors (ODbL)</p>
+</footer>
 </body>
 </html>
